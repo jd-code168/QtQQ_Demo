@@ -11,7 +11,7 @@
 #include "windowmanager.h"
 
 extern QString gLoginEmployeeID;
-const int gUdpPort=6666;
+const int gUdpPort=8888;
 
 TalkWindowShell::TalkWindowShell(QWidget *parent)
 	: BasicWindow(parent)
@@ -28,8 +28,8 @@ TalkWindowShell::TalkWindowShell(QWidget *parent)
 		QStringList employeesIDList = getEmployeesID();
 		if (!createJSFile(employeesIDList)) {
 			QMessageBox::information(this, 
-			QString::fromLocal8Bit("ÌáÊ¾"), 
-			QString::fromLocal8Bit("¸üĞÂjsÎÄ¼şÊı¾İÊ§°Ü£¡"));
+			QString::fromLocal8Bit("æç¤º"), 
+			QString::fromLocal8Bit("æ›´æ–°jsæ–‡ä»¶æ•°æ®å¤±è´¥ï¼"));
 		}
 	}
 
@@ -50,19 +50,19 @@ void TalkWindowShell::addTalkWindow(TalkWindow * talkWindow, TalkWindowItem * ta
 
 	aItem->setSelected(true);
 
-	//ÅĞ¶ÏÊÇÈºÁÄ»¹ÊÇµ¥ÁÄ
+	//åˆ¤æ–­æ˜¯ç¾¤èŠè¿˜æ˜¯å•èŠ
 	QSqlQueryModel sqlDepModel;
 	QString strQuery = QString("SELECT picture FROM tab_department WHERE departmentID=%1").arg(uid);
 	sqlDepModel.setQuery(strQuery);
 	int rows = sqlDepModel.rowCount();
 
-	if (rows == 0) {//µ¥ÁÄ
+	if (rows == 0) {//å•èŠ
 		strQuery = QString("SELECT picture FROM tab_employees WHERE employeeID=%1").arg(uid);
 		sqlDepModel.setQuery(strQuery);
 	}
 
 	QModelIndex index;
-	index = sqlDepModel.index(0, 0); //ĞĞ£¬ÁĞ
+	index = sqlDepModel.index(0, 0); //è¡Œï¼Œåˆ—
 
 	QImage img;
 	img.load(sqlDepModel.data(index).toString());
@@ -99,16 +99,16 @@ const QMap<QListWidgetItem*, QWidget*>& TalkWindowShell::getTalkWindowItemMap() 
 void TalkWindowShell::initControl()
 {
 	loadStyleSheet("TalkWindow");
-	setWindowTitle(QString::fromLocal8Bit("Demo-ÁÄÌì´°¿Ú"));
+	setWindowTitle(QString::fromLocal8Bit("Demo-èŠå¤©çª—å£"));
 
 	m_emotionWindow = new EmotionWindow;
-	m_emotionWindow->hide();  //Òş²Ø±íÇé´°¿Ú
+	m_emotionWindow->hide();  //éšè—è¡¨æƒ…çª—å£
 	QList<int> leftWidgetSize;
 
 	leftWidgetSize << 154
 		<< width() - 154;
 
-	ui.splitter->setSizes(leftWidgetSize); //·ÖÁĞÆ÷ÉèÖÃ³ß´ç
+	ui.splitter->setSizes(leftWidgetSize); //åˆ†åˆ—å™¨è®¾ç½®å°ºå¯¸
 
 	ui.listWidget->setStyle(new CustomProxyStyle(this));
 
@@ -140,11 +140,11 @@ QStringList TalkWindowShell::getEmployeesID()
 	QSqlQueryModel queryModel;
 	queryModel.setQuery("SELECT employeeID FROM tab_employees WHERE status=1");
 	
-	//·µ»ØÄ£ĞÍµÄ×ÜĞĞÊı(Ô±¹¤µÄ×ÜÊı)
+	//è¿”å›æ¨¡å‹çš„æ€»è¡Œæ•°(å‘˜å·¥çš„æ€»æ•°)
 	int employeesNum = queryModel.rowCount();
 	QModelIndex index;
 	for (int i = 0; i < employeesNum; ++i) {
-		index = queryModel.index(i, 0); //ĞĞ£¬ÁĞ
+		index = queryModel.index(i, 0); //è¡Œï¼Œåˆ—
 		employeesDList<<queryModel.data(index).toString();
 	}
 
@@ -153,7 +153,7 @@ QStringList TalkWindowShell::getEmployeesID()
 
 bool TalkWindowShell::createJSFile(QStringList & employeesList)
 {
-	//¶ÁÈ¡TXTÎÄ¼şÊı¾İ
+	//è¯»å–TXTæ–‡ä»¶æ•°æ®
 	QString strFileTxt = "Resources/MainWindow/MsgHtml/msgtmpl.txt";
 	QFile fileRead(strFileTxt);
 	QString strFile;
@@ -164,17 +164,17 @@ bool TalkWindowShell::createJSFile(QStringList & employeesList)
 	}
 	else {
 		QMessageBox::information(this,
-			QString::fromLocal8Bit("ÌáÊ¾"),
-			QString::fromLocal8Bit("¶ÁÈ¡msgtmpl.txtÊ§°Ü"));
+			QString::fromLocal8Bit("æç¤º"),
+			QString::fromLocal8Bit("è¯»å–msgtmpl.txtå¤±è´¥"));
 		return false;
 	}
 
-	//Ìæ»»£¨external0,appendHtml0ÓÃ×÷×Ô¼º·¢ĞÅÏ¢Ê¹ÓÃ£©
+	//æ›¿æ¢ï¼ˆexternal0,appendHtml0ç”¨ä½œè‡ªå·±å‘ä¿¡æ¯ä½¿ç”¨ï¼‰
 
 	QFile fileWrite("Resources/MainWindow/MsgHtml/msgtmpl.js");
 	if (fileWrite.open(QIODevice::WriteOnly | QIODevice::Truncate)) {
 
-		//¸üĞÂ¿ÕÖµ
+		//æ›´æ–°ç©ºå€¼
 		QString strSourceInitNull = "var external = null;";
 		QString strSourceInit = "external = channel.objects.external;";
 		QString strSourceNew=
@@ -184,7 +184,7 @@ bool TalkWindowShell::createJSFile(QStringList & employeesList)
 		}\
 		); \
 		";
-		//¸üĞÂ×·¼ÓrecvHtml,½Å±¾ÖĞÓĞË«ÒıºÅÎŞ·¨Ö±½Ó½øĞĞ¸³Öµ£¬²ÉÓÃ¶ÁÎÄ¼ş·½Ê½
+		//æ›´æ–°è¿½åŠ recvHtml,è„šæœ¬ä¸­æœ‰åŒå¼•å·æ— æ³•ç›´æ¥è¿›è¡Œèµ‹å€¼ï¼Œé‡‡ç”¨è¯»æ–‡ä»¶æ–¹å¼
 		QString strSourceRecvHtml;
 		QFile fileRecvHtml("Resources/MainWindow/MsgHtml/recvHtml.txt");
 
@@ -194,37 +194,37 @@ bool TalkWindowShell::createJSFile(QStringList & employeesList)
 		}
 		else{
 			QMessageBox::information(this,
-				QString::fromLocal8Bit("ÌáÊ¾"),
-				QString::fromLocal8Bit("¶ÁÈ¡recvHtml.txtÊ§°Ü"));
+				QString::fromLocal8Bit("æç¤º"),
+				QString::fromLocal8Bit("è¯»å–recvHtml.txtå¤±è´¥"));
 			return false;
 		}
 
-		//±£´æÌæ»»ºóµÄ½Å±¾
+		//ä¿å­˜æ›¿æ¢åçš„è„šæœ¬
 		QString strReplaceInitNull;
 		QString strReplaceInit;
 		QString strReplaceNew;
 		QString strReplaceRecvHtml;
 
 		for (int i = 0; i < employeesList.length(); i++) {
-			//±à¼­Ìæ»»ºóµÄ¿ÕÖµ
+			//ç¼–è¾‘æ›¿æ¢åçš„ç©ºå€¼
 			QString strInitNull = strSourceInitNull;
 			strInitNull.replace("external", QString("external_%1").arg(employeesList.at(i)));
 			strReplaceInitNull += strInitNull;
 			strReplaceInitNull += "\n";
 
-			//±à¼­Ìæ»»ºóµÄ¿ÕÖµ
+			//ç¼–è¾‘æ›¿æ¢åçš„ç©ºå€¼
 			QString strInit = strSourceInit;
 			strInit.replace("external", QString("external_%1").arg(employeesList.at(i)));
 			strReplaceInit += strInit;
 			strReplaceInit += "\n";
 
-			//±à¼­Ìæ»»ºóµÄnewWebChanne
+			//ç¼–è¾‘æ›¿æ¢åçš„newWebChanne
 			QString strNew = strSourceNew;
 			strNew.replace("external", QString("external_%1").arg(employeesList.at(i)));
 			strReplaceNew += strNew;
 			strReplaceNew += "\n";
 
-			//±à¼­Ìæ»»ºóµÄ recvHtml
+			//ç¼–è¾‘æ›¿æ¢åçš„ recvHtml
 			QString strRecvHTML = strSourceRecvHtml;
 			strRecvHTML.replace("external", QString("external_%1").arg(employeesList.at(i)));
 			strRecvHTML.replace("recvHtml", QString("recvHtml_%1").arg(employeesList.at(i)));
@@ -244,8 +244,8 @@ bool TalkWindowShell::createJSFile(QStringList & employeesList)
 	}
 	else {
 		QMessageBox::information(this,
-			QString::fromLocal8Bit("ÌáÊ¾"),
-			QString::fromLocal8Bit("Ğ´msgtmpl.jsÊ§°Ü"));
+			QString::fromLocal8Bit("æç¤º"),
+			QString::fromLocal8Bit("å†™msgtmpl.jså¤±è´¥"));
 		return false;
 	}
 }
@@ -255,10 +255,10 @@ void TalkWindowShell::handleReceivedMsg(int senderEmployeeID, int msgType, QStri
 	QMsgTextEdit msgTextEdit;
 	msgTextEdit.setText(strMsg);
 
-	if (msgType == 1) {	//ÎÄ±¾ĞÅÏ¢
+	if (msgType == 1) {	//æ–‡æœ¬ä¿¡æ¯
 		msgTextEdit.document()->toHtml();
 	}
-	else if(msgType==0) { //±íÇéĞÅÏ¢
+	else if(msgType==0) { //è¡¨æƒ…ä¿¡æ¯
 		const int emotionWidth = 3;
 		int emotionNum = strMsg.length() / emotionWidth;
 
@@ -269,7 +269,7 @@ void TalkWindowShell::handleReceivedMsg(int senderEmployeeID, int msgType, QStri
 
 	QString html = msgTextEdit.document()->toHtml();
 
-	//ÎÄ±¾htmlÈç¹ûÃ»ÓĞ×ÖÌåÔòÌí¼Ó×ÖÌå
+	//æ–‡æœ¬htmlå¦‚æœæ²¡æœ‰å­—ä½“åˆ™æ·»åŠ å­—ä½“
 	if (!html.contains(".png") && !html.contains("</span>")) {
 		QString fontHtml;
 		QFile file(":/Resources/MainWindow/MsgHtml/msgFont.txt");
@@ -279,7 +279,7 @@ void TalkWindowShell::handleReceivedMsg(int senderEmployeeID, int msgType, QStri
 			file.close();
 		}
 		else {
-			QMessageBox::information(this, QString::fromLocal8Bit("ÌáÊ¾"), QString::fromLocal8Bit("ÎÄ¼şmsgFont.txt²»´æÔÚ"));
+			QMessageBox::information(this, QString::fromLocal8Bit("æç¤º"), QString::fromLocal8Bit("æ–‡ä»¶msgFont.txtä¸å­˜åœ¨"));
 			return;
 		}
 		if (!html.contains(fontHtml)) {
@@ -291,19 +291,19 @@ void TalkWindowShell::handleReceivedMsg(int senderEmployeeID, int msgType, QStri
 	talkWindow->ui.msgWidget->appendMsg(html, QString::number(senderEmployeeID));
 }
 
-//ÎÄ±¾Êı¾İ°ü¸ñÊ½£ºÈºÁÄ±êÖ¾+·¢ĞÅÏ¢Ô±¹¤QQºÅ+ÊÕĞÅÏ¢Ô±¹¤QQºÅ£¨ÈºQQºÅ£©+ĞÅÏ¢ÀàĞÍ+Êı¾İ³¤¶È+Êı¾İ£¨hello£©
-//±íÇéÊı¾İ°ü¸ñÊ½£ºÈºÁÄ±êÖ¾+·¢ĞÅÏ¢Ô±¹¤QQºÅ+ÊÕĞÅÏ¢Ô±¹¤QQºÅ£¨ÈºQQºÅ£©+ĞÅÏ¢ÀàĞÍ+±íÇé¸öÊı+images+Êı¾İ
-//msgType 0±íÇéĞÅÏ¢ 1ÎÄ±¾ĞÅÏ¢ 2 ÎÄ¼şĞÅÏ¢
+//æ–‡æœ¬æ•°æ®åŒ…æ ¼å¼ï¼šç¾¤èŠæ ‡å¿—+å‘ä¿¡æ¯å‘˜å·¥QQå·+æ”¶ä¿¡æ¯å‘˜å·¥QQå·ï¼ˆç¾¤QQå·ï¼‰+ä¿¡æ¯ç±»å‹+æ•°æ®é•¿åº¦+æ•°æ®ï¼ˆhelloï¼‰
+//è¡¨æƒ…æ•°æ®åŒ…æ ¼å¼ï¼šç¾¤èŠæ ‡å¿—+å‘ä¿¡æ¯å‘˜å·¥QQå·+æ”¶ä¿¡æ¯å‘˜å·¥QQå·ï¼ˆç¾¤QQå·ï¼‰+ä¿¡æ¯ç±»å‹+è¡¨æƒ…ä¸ªæ•°+images+æ•°æ®
+//msgType 0è¡¨æƒ…ä¿¡æ¯ 1æ–‡æœ¬ä¿¡æ¯ 2 æ–‡ä»¶ä¿¡æ¯
 void TalkWindowShell::updateSendTcpMsg(QString & strData, int & msgType, QString fileName)
 {
-	//»ñÈ¡µ±Ç°»î¶¯ÁÄÌì´°¿Ú
+	//è·å–å½“å‰æ´»åŠ¨èŠå¤©çª—å£
 	TalkWindow* curTalkWindow = dynamic_cast<TalkWindow*>(ui.rightStackedWidget->currentWidget());
 	QString talkId = curTalkWindow->getTalkId();
 
 	QString strGroupFlag;
 	QString strSend;
 
-	if (talkId.length() == 4) { //ÈºQQµÄ³¤¶È
+	if (talkId.length() == 4) { //ç¾¤QQçš„é•¿åº¦
 		strGroupFlag = "1";
 	}
 	else {
@@ -314,8 +314,8 @@ void TalkWindowShell::updateSendTcpMsg(QString & strData, int & msgType, QString
 	int dataLength = QString::number(nstrDataLength).length(); // "10"
 	//const int sourceDataLength = dataLength;
 	QString strdataLength;
-	if (msgType == 1) {//·¢ËÍÎÄ±¾ĞÅÏ¢
-		//ÎÄ±¾ĞÅÏ¢µÄ³¤¶ÈÔ¼¶¨Îª5Î»
+	if (msgType == 1) {//å‘é€æ–‡æœ¬ä¿¡æ¯
+		//æ–‡æœ¬ä¿¡æ¯çš„é•¿åº¦çº¦å®šä¸º5ä½
 		if (dataLength == 1) {
 			strdataLength = "0000" + QString::number(nstrDataLength);
 		}
@@ -333,22 +333,22 @@ void TalkWindowShell::updateSendTcpMsg(QString & strData, int & msgType, QString
 		}
 		else {
 			QMessageBox::information(this,
-				QString::fromLocal8Bit("ÌáÊ¾"),
-				QString::fromLocal8Bit("²»ºÏÀíµÄÊı¾İ³¤¶È"));
+				QString::fromLocal8Bit("æç¤º"),
+				QString::fromLocal8Bit("ä¸åˆç†çš„æ•°æ®é•¿åº¦"));
 		}
 
-		//ÎÄ±¾Êı¾İ°ü¸ñÊ½£ºÈºÁÄ±êÖ¾ + ·¢ĞÅÏ¢Ô±¹¤QQºÅ + ÊÕĞÅÏ¢Ô±¹¤QQºÅ£¨ÈºQQºÅ£© + ĞÅÏ¢ÀàĞÍ + Êı¾İ³¤¶È + Êı¾İ£¨hello£©
+		//æ–‡æœ¬æ•°æ®åŒ…æ ¼å¼ï¼šç¾¤èŠæ ‡å¿— + å‘ä¿¡æ¯å‘˜å·¥QQå· + æ”¶ä¿¡æ¯å‘˜å·¥QQå·ï¼ˆç¾¤QQå·ï¼‰ + ä¿¡æ¯ç±»å‹ + æ•°æ®é•¿åº¦ + æ•°æ®ï¼ˆhelloï¼‰
 		strSend = strGroupFlag + gLoginEmployeeID + talkId + "1" + strdataLength + strData;
 
 	}
-	else if (msgType == 0) { //±íÇéĞÅÏ¢
-		//±íÇéÊı¾İ°ü¸ñÊ½£ºÈºÁÄ±êÖ¾+·¢ĞÅÏ¢Ô±¹¤QQºÅ+ÊÕĞÅÏ¢Ô±¹¤QQºÅ£¨ÈºQQºÅ£©+ĞÅÏ¢ÀàĞÍ+±íÇé¸öÊı+images+Êı¾İ
+	else if (msgType == 0) { //è¡¨æƒ…ä¿¡æ¯
+		//è¡¨æƒ…æ•°æ®åŒ…æ ¼å¼ï¼šç¾¤èŠæ ‡å¿—+å‘ä¿¡æ¯å‘˜å·¥QQå·+æ”¶ä¿¡æ¯å‘˜å·¥QQå·ï¼ˆç¾¤QQå·ï¼‰+ä¿¡æ¯ç±»å‹+è¡¨æƒ…ä¸ªæ•°+images+æ•°æ®
 		strSend = strGroupFlag + gLoginEmployeeID + talkId
 			+ "0" + strData;
 	}
-	else if (msgType == 2) { //ÎÄ¼ş
-		//ÎÄ¼şÊı¾İ°ü¸ñÊ½£ºÈºÁÄ±êÖ¾+·¢ĞÅÏ¢Ô±¹¤QQºÅ+ÊÕĞÅÏ¢Ô±¹¤QQºÅ£¨ÈºQQºÅ£©
-		//+ĞÅÏ¢ÀàĞÍ£¨2£©+ÎÄ¼ş³¤¶È+"bytes"+ÎÄ¼şÃû³Æ+"data_begin"+ÎÄ¼şÄÚÈİ
+	else if (msgType == 2) { //æ–‡ä»¶
+		//æ–‡ä»¶æ•°æ®åŒ…æ ¼å¼ï¼šç¾¤èŠæ ‡å¿—+å‘ä¿¡æ¯å‘˜å·¥QQå·+æ”¶ä¿¡æ¯å‘˜å·¥QQå·ï¼ˆç¾¤QQå·ï¼‰
+		//+ä¿¡æ¯ç±»å‹ï¼ˆ2ï¼‰+æ–‡ä»¶é•¿åº¦+"bytes"+æ–‡ä»¶åç§°+"data_begin"+æ–‡ä»¶å†…å®¹
 
 		QByteArray bt = strData.toUtf8();
 		QString strLength = QString::number(bt.length());
@@ -370,86 +370,86 @@ void TalkWindowShell::onEmotionItemClicked(int emotionNum)
 }
 
 /*****************************************************************************************************************************
-	Êı¾İ°ü¸ñÊ½
-	ÎÄ±¾Êı¾İ°ü¸ñÊ½£ºÈºÁÄ±êÖ¾+·¢ĞÅÏ¢Ô±¹¤QQºÅ+ÊÕĞÅÏ¢Ô±¹¤QQºÅ£¨ÈºQQºÅ£©+ĞÅÏ¢ÀàĞÍ£¨1£©+Êı¾İ³¤¶È+Êı¾İ
-	±íÇéÊı¾İ°ü¸ñÊ½£ºÈºÁÄ±êÖ¾+·¢ĞÅÏ¢Ô±¹¤QQºÅ+ÊÕĞÅÏ¢Ô±¹¤QQºÅ£¨ÈºQQºÅ£©+ĞÅÏ¢ÀàĞÍ£¨0£©+±íÇé¸öÊı+images+±íÇéÃû³Æ
-	ÎÄ¼şÊı¾İ°ü¸ñÊ½£ºÈºÁÄ±êÖ¾+·¢ĞÅÏ¢Ô±¹¤QQºÅ+ÊÕĞÅÏ¢Ô±¹¤QQºÅ£¨ÈºQQºÅ£©+ĞÅÏ¢ÀàĞÍ£¨2£©+ÎÄ¼ş×Ö½ÚÊı+bytes+ÎÄ¼şÃû+data_begin+ÎÄ¼şÊı¾İ
+	æ•°æ®åŒ…æ ¼å¼
+	æ–‡æœ¬æ•°æ®åŒ…æ ¼å¼ï¼šç¾¤èŠæ ‡å¿—+å‘ä¿¡æ¯å‘˜å·¥QQå·+æ”¶ä¿¡æ¯å‘˜å·¥QQå·ï¼ˆç¾¤QQå·ï¼‰+ä¿¡æ¯ç±»å‹ï¼ˆ1ï¼‰+æ•°æ®é•¿åº¦+æ•°æ®
+	è¡¨æƒ…æ•°æ®åŒ…æ ¼å¼ï¼šç¾¤èŠæ ‡å¿—+å‘ä¿¡æ¯å‘˜å·¥QQå·+æ”¶ä¿¡æ¯å‘˜å·¥QQå·ï¼ˆç¾¤QQå·ï¼‰+ä¿¡æ¯ç±»å‹ï¼ˆ0ï¼‰+è¡¨æƒ…ä¸ªæ•°+images+è¡¨æƒ…åç§°
+	æ–‡ä»¶æ•°æ®åŒ…æ ¼å¼ï¼šç¾¤èŠæ ‡å¿—+å‘ä¿¡æ¯å‘˜å·¥QQå·+æ”¶ä¿¡æ¯å‘˜å·¥QQå·ï¼ˆç¾¤QQå·ï¼‰+ä¿¡æ¯ç±»å‹ï¼ˆ2ï¼‰+æ–‡ä»¶å­—èŠ‚æ•°+bytes+æ–‡ä»¶å+data_begin+æ–‡ä»¶æ•°æ®
 
-	ÈºÁÄ±êÖ¾Õ¼1Î»£¬0±íÊ¾µ¥ÁÄ£¬1±íÊ¾ÈºÁÄ
-	ĞÅÏ¢ÀàĞÍÕ¼1Î»£¬0±íÊ¾±íÇéĞÅÏ¢£¬1±íÊ¾ÎÄ±¾ĞÅÏ¢£¬2±íÊ¾ÎÄ¼şĞÅÏ¢
+	ç¾¤èŠæ ‡å¿—å 1ä½ï¼Œ0è¡¨ç¤ºå•èŠï¼Œ1è¡¨ç¤ºç¾¤èŠ
+	ä¿¡æ¯ç±»å‹å 1ä½ï¼Œ0è¡¨ç¤ºè¡¨æƒ…ä¿¡æ¯ï¼Œ1è¡¨ç¤ºæ–‡æœ¬ä¿¡æ¯ï¼Œ2è¡¨ç¤ºæ–‡ä»¶ä¿¡æ¯
 
-	QQºÅÕ¼5Î»£¬ÈºQQºÅÕ¼4Î»£¬Êı¾İ³¤¶ÈÕ¼5Î»£¬±íÇéÃû³ÆÕ¼3Î»
-	£¨×¢Òâ£ºµ±ÈºÁÄ±êÖ¾Îª1Ê±£¬ÔòÊı¾İ°üÃ»ÓĞÊÕĞÅÏ¢Ô±¹¤QQºÅ£¬¶øÊÇÊÕĞÅÏ¢ÈººÅ
-			µ±ÈºÁÄ±êÖ¾Îª0Ê±£¬ÔòÊı¾İ°üÃ»ÓĞÊÕĞÅÏ¢ÈºQQºÅ£¬¶øÊÇÊÕĞÅÏ¢Ô±¹¤QQºÅ£©
+	QQå·å 5ä½ï¼Œç¾¤QQå·å 4ä½ï¼Œæ•°æ®é•¿åº¦å 5ä½ï¼Œè¡¨æƒ…åç§°å 3ä½
+	ï¼ˆæ³¨æ„ï¼šå½“ç¾¤èŠæ ‡å¿—ä¸º1æ—¶ï¼Œåˆ™æ•°æ®åŒ…æ²¡æœ‰æ”¶ä¿¡æ¯å‘˜å·¥QQå·ï¼Œè€Œæ˜¯æ”¶ä¿¡æ¯ç¾¤å·
+			å½“ç¾¤èŠæ ‡å¿—ä¸º0æ—¶ï¼Œåˆ™æ•°æ®åŒ…æ²¡æœ‰æ”¶ä¿¡æ¯ç¾¤QQå·ï¼Œè€Œæ˜¯æ”¶ä¿¡æ¯å‘˜å·¥QQå·ï¼‰
 
-			ÈºÁÄÎÄ±¾ĞÅÏ¢Èç£º110001200100005Hello ±íÊ¾QQ100001ÏòÈº2001·¢ËÍÎÄ±¾ĞÅÏ¢£¬³¤¶ÈÊÇ5£¬Êı¾İÎªHello
-			µ¥ÁÄÍ¼Æ¬ĞÅÏ¢Èç£º0100011000201images060		 ±íÊ¾QQ100001ÏòQQ10002·¢ËÍ1¸ö±íÇé60.png
-			ÈºÁÄÎÄ¼şĞÅÏ¢Èç£º11000052000210bytestest.txtdata_beginhelloword
-												 ±íÊ¾QQ10005ÏòÈº2000·¢ËÍÎÄ¼şĞÅÏ¢£¬ÎÄ¼şÊ±test.txt,ÎÄ¼şÄÚÈİ³¤¶È10£¬ÄÚÈİhelloword
+			ç¾¤èŠæ–‡æœ¬ä¿¡æ¯å¦‚ï¼š110001200100005Hello è¡¨ç¤ºQQ100001å‘ç¾¤2001å‘é€æ–‡æœ¬ä¿¡æ¯ï¼Œé•¿åº¦æ˜¯5ï¼Œæ•°æ®ä¸ºHello
+			å•èŠå›¾ç‰‡ä¿¡æ¯å¦‚ï¼š0100011000201images060		 è¡¨ç¤ºQQ100001å‘QQ10002å‘é€1ä¸ªè¡¨æƒ…60.png
+			ç¾¤èŠæ–‡ä»¶ä¿¡æ¯å¦‚ï¼š11000052000210bytestest.txtdata_beginhelloword
+												 è¡¨ç¤ºQQ10005å‘ç¾¤2000å‘é€æ–‡ä»¶ä¿¡æ¯ï¼Œæ–‡ä»¶æ—¶test.txt,æ–‡ä»¶å†…å®¹é•¿åº¦10ï¼Œå†…å®¹helloword
 			
-			ÈºÁÄÎÄ¼şĞÅÏ¢½âÎö£º1 10001 2001 00005 Hello
-			µ¥ÁÄÍ¼Æ¬ĞÅÏ¢½âÎö£º0	10001 10002 0 060
-			ÈºÁÄÎÄ¼şĞÅÏ¢½âÎö£º1 10005 2000 2 10 bytes test.txt data_begin helloword
+			ç¾¤èŠæ–‡ä»¶ä¿¡æ¯è§£æï¼š1 10001 2001 00005 Hello
+			å•èŠå›¾ç‰‡ä¿¡æ¯è§£æï¼š0	10001 10002 0 060
+			ç¾¤èŠæ–‡ä»¶ä¿¡æ¯è§£æï¼š1 10005 2000 2 10 bytes test.txt data_begin helloword
 ******************************************************************************************************************************/
 void TalkWindowShell::processPendingData()
 {
-	//¶Ë¿ÚÖĞÓĞÎ´´¦ÀíµÄÊı¾İ
+	//ç«¯å£ä¸­æœ‰æœªå¤„ç†çš„æ•°æ®
 	while (m_udpReceiver->hasPendingDatagrams()) {
-		const static int groupFlagWidth = 1;	//ÈºÁÄ±êÖ¾Õ¼Î»
-		const static int groupWidth = 4;	//ÈºQQºÅ¿í¶È
-		const static int employeeWidth = 5;	//Ô±¹¤QQºÅ¿í¶È
-		const static int msgTypeWidth = 1;	//ĞÅÏ¢ÀàĞÍ¿í¶È
-		const static int msgLengthWidth = 5;	//ÎÄ±¾ĞÅÏ¢³¤¶ÈµÄ¿í¶È
-		const static int pictureWidth = 3;	//±íÇéÍ¼Æ¬µÄ¿í¶È
+		const static int groupFlagWidth = 1;	//ç¾¤èŠæ ‡å¿—å ä½
+		const static int groupWidth = 4;	//ç¾¤QQå·å®½åº¦
+		const static int employeeWidth = 5;	//å‘˜å·¥QQå·å®½åº¦
+		const static int msgTypeWidth = 1;	//ä¿¡æ¯ç±»å‹å®½åº¦
+		const static int msgLengthWidth = 5;	//æ–‡æœ¬ä¿¡æ¯é•¿åº¦çš„å®½åº¦
+		const static int pictureWidth = 3;	//è¡¨æƒ…å›¾ç‰‡çš„å®½åº¦
 
-		//¶ÁÈ¡udpÊı¾İ
+		//è¯»å–udpæ•°æ®
 		QByteArray btData;
 		btData.resize(m_udpReceiver->pendingDatagramSize());
 		m_udpReceiver->readDatagram(btData.data(), btData.size());
 
 		QString strData = btData.data();
-		QString strWindowID;	//ÁÄÌì´°¿ÚID£¬ÈºÁÄÕâÊÇÈººÅ£¬µ¥ÁÄÔòÊÇÔ±¹¤QQºÅ
-		QString	strSendEmployeeID, strRecevieEmployeeID;	//·¢ËÍ¼°½ÓÊÕ¶ËµÄQQºÅ
-		QString strMsg;	//Êı¾İ
+		QString strWindowID;	//èŠå¤©çª—å£IDï¼Œç¾¤èŠè¿™æ˜¯ç¾¤å·ï¼Œå•èŠåˆ™æ˜¯å‘˜å·¥QQå·
+		QString	strSendEmployeeID, strRecevieEmployeeID;	//å‘é€åŠæ¥æ”¶ç«¯çš„QQå·
+		QString strMsg;	//æ•°æ®
 
-		int msgLen;	//Êı¾İ³¤¶È
-		int msgType;	//Êı¾İÀàĞÍ
+		int msgLen;	//æ•°æ®é•¿åº¦
+		int msgType;	//æ•°æ®ç±»å‹
 
 		strSendEmployeeID = strData.mid(groupFlagWidth, employeeWidth);
 
-		//×Ô¼º·¢µÄĞÅÏ¢²»×ö´¦Àí
+		//è‡ªå·±å‘çš„ä¿¡æ¯ä¸åšå¤„ç†
 		if (strSendEmployeeID == gLoginEmployeeID)
 			return;
 
-		if (btData[0] == '1') { //ÈºÁÄ
+		if (btData[0] == '1') { //ç¾¤èŠ
 			strWindowID = strData.mid(groupFlagWidth + employeeWidth, groupWidth);
 
 			QChar cMsgType = btData[groupFlagWidth + employeeWidth + groupWidth];
-			if (cMsgType == '1') {//ÎÄ±¾ĞÅÏ¢
+			if (cMsgType == '1') {//æ–‡æœ¬ä¿¡æ¯
 				msgType = 1;
 				msgLen = strData.mid(groupFlagWidth + employeeWidth + groupWidth + msgTypeWidth, msgLengthWidth).toInt();
 				strMsg = strData.mid(groupFlagWidth + employeeWidth + groupWidth + msgTypeWidth + msgLengthWidth, msgLen);
 
-			}else if (cMsgType == '0') {//±íÇéĞÅÏ¢
+			}else if (cMsgType == '0') {//è¡¨æƒ…ä¿¡æ¯
 				msgType = 0;
 				int posImages = strData.indexOf("images");
 				strMsg = strData.right(strData.length() - posImages - QString("images").length());
 			}
-			else if (cMsgType == '2') { //ÎÄ¼şĞÅÏ¢
+			else if (cMsgType == '2') { //æ–‡ä»¶ä¿¡æ¯
 				msgType = 2;
 				int bytesWidth = QString("bytes").length();
 				int posBytes = strData.indexOf("bytes");
 				int posData_begin = strData.indexOf("data_begin");
 				
-				//ÎÄ¼şÃû
+				//æ–‡ä»¶å
 				QString fileName = strData.mid(posBytes+bytesWidth, posData_begin- posBytes - bytesWidth);
 
-				//ÎÄ¼şÄÚÈİ
+				//æ–‡ä»¶å†…å®¹
 				int dataLengthWidth;
 				int posData = posData_begin + QString("data_begin").length();
 				strMsg = strData.mid(posData);
 
-				//¸ù¾İemployeeID»ñÈ¡·¢ËÍÕßĞÕÃû
+				//æ ¹æ®employeeIDè·å–å‘é€è€…å§“å
 				QString sender;
 				int employeeID = strSendEmployeeID.toInt();
 				QSqlQuery queryGroupName(QString("SELECT employee_name FROM tab_employess WHERE employeeID=%1")
@@ -460,33 +460,33 @@ void TalkWindowShell::processPendingData()
 					sender = queryGroupName.value(0).toString();
 				}
 
-				//½ÓÊÕÎÄ¼şµÄºóĞø²Ù×÷¡­¡­
+				//æ¥æ”¶æ–‡ä»¶çš„åç»­æ“ä½œâ€¦â€¦
 			}
 		}
-		else { //µ¥ÁÄ
+		else { //å•èŠ
 			strRecevieEmployeeID = strData.mid(groupFlagWidth + employeeWidth, employeeWidth);
 			strWindowID = strSendEmployeeID;
 
-			//»ñÈ¡ĞÅÏ¢ÀàĞÍ
-			QChar cMsgType = btData[groupFlagWidth + employeeWidth];
-			if (cMsgType == '1') {	//ÎÄ±¾ĞÅÏ¢
+			//è·å–ä¿¡æ¯ç±»å‹
+			QChar cMsgType = btData[groupFlagWidth + employeeWidth+ employeeWidth];
+			if (cMsgType == '1') {	//æ–‡æœ¬ä¿¡æ¯
 				msgType = 1;
 
-				//ÎÄ±¾ĞÅÏ¢³¤¶È
+				//æ–‡æœ¬ä¿¡æ¯é•¿åº¦
 				msgLen = strData.mid(groupFlagWidth + employeeWidth + employeeWidth
 					+ msgTypeWidth, msgLengthWidth).toInt();
 
-				//ÎÄ±¾ĞÅÏ¢
+				//æ–‡æœ¬ä¿¡æ¯
 				strMsg = strData.mid(groupFlagWidth + employeeWidth + employeeWidth
 					+ msgTypeWidth + msgLengthWidth, msgLen);
 			}
-			else if (cMsgType == '0') {//±íÇéĞÅÏ¢
+			else if (cMsgType == '0') {//è¡¨æƒ…ä¿¡æ¯
 				msgType = 0;
 				int posImages = strData.indexOf("images");
 				int imagesWidth = QString("images").length();
 				strMsg = strData.mid(posImages + imagesWidth);
 			}
-			else if (cMsgType == '2') { //ÎÄ¼şĞÅÏ¢
+			else if (cMsgType == '2') { //æ–‡ä»¶ä¿¡æ¯
 				msgType = 2;
 				
 				int bytesWidth = QString("bytes").length();
@@ -494,29 +494,29 @@ void TalkWindowShell::processPendingData()
 				int data_beginWidth = QString("data_begin").length();
 				int posData_begin = strData.indexOf("data_begin");
 
-				//ÎÄ¼şÃû³Æ
+				//æ–‡ä»¶åç§°
 				QString fileName = strData.mid(posBytes + bytesWidth, posData_begin - posBytes - bytesWidth);
 
-				//ÎÄ¼şÄÚÈİ
+				//æ–‡ä»¶å†…å®¹
 				strMsg = strData.mid(posData_begin + data_beginWidth);
 
 			}
 		}
-		//½«ÁÄÌì´°¿ÚÉèÎª»î¶¯µÄ´°¿Ú
+		//å°†èŠå¤©çª—å£è®¾ä¸ºæ´»åŠ¨çš„çª—å£
 		QWidget* widget = WindowManager::getInstance()->findWindowName(strWindowID);
-		if (widget) {//ÁÄÌì´°¿Ú´æÔÚ
+		if (widget) {//èŠå¤©çª—å£å­˜åœ¨
 			this->setCurrentWidget(widget);
 
-			//Í¬²½×ó²àÁÄÌì´°¿Ú
+			//åŒæ­¥å·¦ä¾§èŠå¤©çª—å£
 			QListWidgetItem* item= m_talkwindowItemMap.key(widget);
 			item->setSelected(true);
 		}
-		else //ÁÄÌì´°¿ÚÎª´ò¿ª
+		else //èŠå¤©çª—å£ä¸ºæ‰“å¼€
 		{
 			return;
 		}
 		
-		//ÎÄ¼şĞÅÏ¢Áí×÷´¦Àí
+		//æ–‡ä»¶ä¿¡æ¯å¦ä½œå¤„ç†
 		if (msgType != 2) {
 			int sendEmployeeID = strSendEmployeeID.toInt();
 			handleReceivedMsg(sendEmployeeID, msgType, strMsg);
@@ -527,7 +527,7 @@ void TalkWindowShell::processPendingData()
 
 void TalkWindowShell::onEmotionBtnClicked(bool) {
 	m_emotionWindow->setVisible(!m_emotionWindow->isVisible());
-	QPoint emotionPoint = this->mapToGlobal(QPoint(0, 0)); //½«µ±Ç°¿Ø¼şµÄÏà¶ÔÎ»ÖÃ×ª»»ÎªÆÁÄ»µÄ¾ø¶ÔÎ»ÖÃ
+	QPoint emotionPoint = this->mapToGlobal(QPoint(0, 0)); //å°†å½“å‰æ§ä»¶çš„ç›¸å¯¹ä½ç½®è½¬æ¢ä¸ºå±å¹•çš„ç»å¯¹ä½ç½®
 
 	emotionPoint.setX(emotionPoint.x() + 170);
 	emotionPoint.setY(emotionPoint.y() + 220);
