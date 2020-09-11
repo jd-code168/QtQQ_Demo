@@ -1,0 +1,6 @@
+﻿  QtQQ_Server.cpp
+  qrc_QtQQ_Server.cpp
+  moc_QtQQ_Server.cpp
+  moc_TcpServer.cpp
+  moc_TcpSocket.cpp
+  QtQQ_Server.vcxproj -> D:\Qtproject\QtQQ_Server\x64\Debug\QtQQ_Server.exe
