@@ -59,7 +59,7 @@ C:\Program Files (x86)\Microsoft Visual Studio\2017\Professional\Common7\IDE\VC\
   userlogin.cpp
   windowmanager.cpp
   MOC_EMOTIONWINDOW.CPP
-d:\qtproject\qtqq\qtqq\userlogin.cpp(107): warning C4700: 使用了未初始化的局部变量“isAccountLogin”
+d:\localgithub\qtqq_demo\qtqq_client\qtqq\userlogin.cpp(107): warning C4700: 使用了未初始化的局部变量“isAccountLogin”
   qrc_CCMainWindow.cpp
   moc_CCMainWindow.cpp
   moc_titlebar.cpp
@@ -84,4 +84,4 @@ d:\qtproject\qtqq\qtqq\userlogin.cpp(107): warning C4700: 使用了未初始化�
   moc_SkinWindow.cpp
   moc_userlogin.cpp
 x64\Debug\moc_emotionwindow.obj : warning LNK4042: 对象被多次指定；已忽略多余的指定
-  QtQQ.vcxproj -> D:\Qtproject\QtQQ\x64\Debug\QtQQ.exe
+  QtQQ.vcxproj -> D:\localGitHub\QtQQ_Demo\QtQQ_Client\x64\Debug\QtQQ.exe
